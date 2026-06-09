@@ -3,7 +3,8 @@
 	url = https://github.com/open-source-parsers/jsoncpp
 [submodule "IXWebSocket"]
 	path = IXWebSocket
-	url = https://github.com/machinezone/IXWebSocket
+	url = https://github.com/techmuse8/IXWebSocket-wiiu.git
+	branch = wiiu-port
 [submodule "zlib"]
 	path = zlib
 	url = https://github.com/madler/zlib/
