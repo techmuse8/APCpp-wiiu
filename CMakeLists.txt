@@ -5,13 +5,9 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+set(CMAKE_POSITION_INDEPENDENT_CODE OFF)
 
 add_library(APCpp SHARED Archipelago.cpp Archipelago_DataStorageSim.cpp Archipelago_Gifting.cpp)
-
-# Allows users to use APCpp as a dependency
-target_include_directories(APCpp PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-
 set_target_properties(APCpp PROPERTIES PUBLIC_HEADER Archipelago.h)
 
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
@@ -29,7 +25,7 @@ if (NOT MINGW)
     endif(NOT OPENSSL_FOUND)
 endif (NOT MINGW)
 
-if ((WIN32 AND USE_TLS) OR USE_MBED_TLS)
+if (WIN32 AND USE_TLS)
     set(APCPP_MBEDTLS_VER 3.6.4)
     execute_process(COMMAND ${CMAKE_COMMAND} -E remove -f mbedtls-${APCPP_MBEDTLS_VER})
     execute_process(
@@ -60,7 +56,7 @@ if (MINGW OR NOT ZLIB_FOUND)
     include(FetchContent)
     FetchContent_Declare(
         zlib
-        SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/zlib"
+        SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/zlib
         OVERRIDE_FIND_PACKAGE
     )
     FetchContent_MakeAvailable(zlib)
@@ -68,7 +64,12 @@ if (MINGW OR NOT ZLIB_FOUND)
 endif (MINGW OR NOT ZLIB_FOUND)
 
 set(IXWEBSOCKET_INSTALL OFF CACHE BOOL "" FORCE)
+include_directories(/opt/devkitpro/portlibs/wiiu/include) 
+link_directories(/opt/devkitpro/portlibs/wiiu/lib)
+add_definitions(-DIXWEBSOCKET_USE_MBED_TLS_MIN_VERSION_3)
 add_subdirectory(IXWebSocket)
+target_include_directories(ixwebsocket PUBLIC /opt/devkitpro/portlibs/wiiu/include)
+target_link_directories(ixwebsocket PUBLIC /opt/devkitpro/portlibs/wiiu/lib)
 include_directories(IXWebSocket)
 target_link_libraries(APCpp ixwebsocket)
 
@@ -91,8 +92,9 @@ if((NOT JSONCPP_FOUND) OR BUNDLED_JSONCPP)
     set(JSONCPP_WITH_TESTS OFF CACHE BOOL "" FORCE)
     set(JSONCPP_WITH_POST_BUILD_UNITTEST OFF CACHE BOOL "" FORCE)
     add_subdirectory(jsoncpp)
-    set_property(TARGET jsoncpp_static PROPERTY POSITION_INDEPENDENT_CODE ON)
+    set_property(TARGET jsoncpp_static PROPERTY POSITION_INDEPENDENT_CODE OFF)
     include_directories(jsoncpp/include)
+	add_definitions(-DJSON_USE_NULLREF=0)
     target_link_libraries(APCpp jsoncpp_static)
 endif((NOT JSONCPP_FOUND) OR BUNDLED_JSONCPP)
 
