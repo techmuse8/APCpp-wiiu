@@ -45,16 +45,6 @@ if (WIN32 AND USE_TLS)
     add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/mbedtls-${APCPP_MBEDTLS_VER} mbedtls_bin)
 endif ((WIN32 AND USE_TLS) OR USE_MBED_TLS)
 
-if (WIIU)
-set(USE_STATIC_MBEDTLS_LIBRARY ON CACHE BOOL "" FORCE)
-    set(MBEDTLS_INCLUDE_DIRS /opt/devkitpro/portlibs/wiiu/include)
-    set(MBEDTLS_VERSION_GREATER_THAN_3 ${MBEDTLS_INCLUDE_DIRS})
-    set(MBEDTLS_LIBRARY mbedtls)
-    set(MBEDX509_LIBRARY mbedx509)
-    set(MBEDCRYPTO_LIBRARY mbedcrypto)
-endif()
-
-
 # Attempt finding system version of zlib
 if (NOT MINGW)
     find_package(ZLIB QUIET)
@@ -85,7 +75,7 @@ add_subdirectory(IXWebSocket)
 target_include_directories(ixwebsocket PUBLIC /opt/devkitpro/portlibs/wiiu/include)
 target_link_directories(ixwebsocket PUBLIC /opt/devkitpro/portlibs/wiiu/lib)
 include_directories(IXWebSocket)
-target_link_libraries(APCpp ixwebsocket)
+target_link_libraries(APCpp ixwebsocket mbedtls mbedx509 mbedcrypto)
 
 if (MINGW)
     target_link_libraries(APCpp -static -static-libstdc++ -static-libgcc)
