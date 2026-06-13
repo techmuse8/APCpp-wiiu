@@ -81,6 +81,7 @@ if (MINGW)
     target_link_libraries(APCpp -static -static-libstdc++ -static-libgcc)
 endif(MINGW)
 
+target_compile_definitions(APCpp PUBLIC JSON_USE_NULLREF=0)
 # Attempt finding system version of JsonCpp
 find_package(PkgConfig)
 if (PKGCONFIG_FOUND AND (NOT MINGW) AND (NOT BUNDLED_JSONCPP))
@@ -90,7 +91,6 @@ if (PKGCONFIG_FOUND AND (NOT MINGW) AND (NOT BUNDLED_JSONCPP))
         target_link_libraries(APCpp ${JSONCPP_LDFLAGS})
     endif(JSONCPP_FOUND)
 endif(PKGCONFIG_FOUND AND (NOT MINGW) AND (NOT BUNDLED_JSONCPP))
-
 # No system version: Enable bundled
 if((NOT JSONCPP_FOUND) OR BUNDLED_JSONCPP)
     set(JSONCPP_WITH_TESTS OFF CACHE BOOL "" FORCE)
@@ -98,7 +98,6 @@ if((NOT JSONCPP_FOUND) OR BUNDLED_JSONCPP)
     add_subdirectory(jsoncpp)
     set_property(TARGET jsoncpp_static PROPERTY POSITION_INDEPENDENT_CODE OFF)
     include_directories(jsoncpp/include)
-	add_definitions(-DJSON_USE_NULLREF=0)
     target_link_libraries(APCpp jsoncpp_static)
 endif((NOT JSONCPP_FOUND) OR BUNDLED_JSONCPP)
 
